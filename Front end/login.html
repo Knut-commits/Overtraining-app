@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- declares document type -->
+<html lang="en"> <!-- specifies the langauge of doc as english -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--ensure scaling on all types of devices -->
+  <title>Login</title> <!--sets the title -->
+  <link rel="stylesheet" href="login-page.css"> <!--links to external css file -->
+  <script defer src="login-page.js"></script> <!-- loads java scirpt file -->
+</head>
+
+<body>
+  <main id="main-holder">
+    <h1 id="login-header">Login</h1>
+    
+    <div id="login-error-msg-holder">
+      <p id="login-error-msg">Invalid username <span id="error-msg-second-line">and/or password</span></p>
+    </div>
+    
+    <form id="login-form">  <!--inputs for usernmae,passwqord and to submit -->
+      <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
+      <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+      <input type="submit" value="Login" id="login-form-submit">
+    </form>
+  
+  </main>
+</body>
+
+</html>
