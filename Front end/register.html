@@ -1,0 +1,29 @@
+<!DOCTYPE html> <!-- declares document type -->
+<html lang="en"> <!-- specifies the langauge of doc as english -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--ensure scaling on all types of devices -->
+  <title>Register</title> <!--sets the title -->
+  <link rel="stylesheet" href="register-page.css"> <!--links to external css file -->
+  <script defer src="register-page.js"></script> <!-- loads java scirpt file -->
+</head>
+
+<body>
+  <main id="main-holder"> <!-- container of rthe page -->
+    <h1 id="register-header">Register</h1> <!--header -->
+    
+    <div id="register-error-msg-holder"> <!--container -->
+      <p id="register-error-msg">Invalid username <span id="error-msg-second-line">and/or password</span></p> <!--error text -->   
+    </div>
+    
+    <form id="register-form">  <!--inputs for usernmae,passwqord and to submit -->
+      <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
+      <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+      <input type="password" name="confirm-password" id="confirm-password-field" class="login-form-field" placeholder="Confirm Password"> <!-- Added confirm password field -->
+      <input type="submit" value="Register" id="register-form-submit">
+    </form>
+  
+  </main>
+</body>
+
+</html>
