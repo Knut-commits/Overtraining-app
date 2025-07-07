@@ -18,3 +18,5 @@ def create_app():
     if__name__ == "__main__":
         app = create_app() #calls the create app function to create teh app ibstance
         app.run(debug=True_)
+
+        
