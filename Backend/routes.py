@@ -38,3 +38,27 @@ def logout():
     session.pop('user_id', None) # removes user ID form the session, logging them out
     return jsonify({'message': 'logged out'})
 
+
+@routes.route('/submit_data', methods = ['post'])
+def submit_data():
+    if 'user_id' not in session: # checks if user is logged and is authorised for this route
+        return jsonify ({'error': 'unauthorised'}), 401 
+    
+    data = request.get_json()
+    user_id = session['user_id']
+    user = User.query.get(user_id) # gets the user data from  the data using their ID stored in the session
+
+    input_data = Data(
+        user_id = user.user_id, #links data to the user
+        dateinput = datetime.utcnow(), #sets the date and time inputed to now as the requets is now
+        heart_rate = data.get('heart_rate'), # gets the heart rate from the data 
+        sleep = data.get('sleep'),
+        # mood = data.get('mood'),
+        # fatigue = data.get('fatigue')
+    
+
+
+    )  # creates a new data instance with the user ID and the data inputted
+    db.session.add(input_data) # adds the new data to the database session
+
+    db.session.commit() 

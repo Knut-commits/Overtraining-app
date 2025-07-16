@@ -13,6 +13,7 @@ class data(db.Model):
     Base_heart_rate = db.Column(db.Float, nullable = False) #base heart rate in beats per minute
     Recorded_heart_rate = db.Column(db.Float, nullable = False) 
     sleep = db.Column(db.Float, nullable = False) #amount of sleep in hours  
-    
+    # mood = db.Column(db.Float, nullable = False) #mood on a scale of 1 to 10
+    # fatigue = db.Column(db.Float, nullable = false) # fatique ona  scale of 1 to 10
     
 
