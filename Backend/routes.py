@@ -20,3 +20,21 @@ def signup():
     db.session.commit()
 
     return jsonify({'message': "aaccount created'}), 201"})
+
+@routes.route('/login', methods = ['POST']) # route for loggin into an exisitng account
+def login():
+    data = request.get_json() 
+    username = data.get['username'] 
+    password = data.get['password'] #this all the same as previous route as it is just reading data from the request
+
+    user = User.query.filter_by(username = username, password = password).first() #checks if the user details inputted macthes one in the database
+    if not user:
+        return jsonify({'error': 'inavlid username or password'}), 401 
+    session['user_id'] = user.id # if user is found then the session will store their ID sp they can be recognised in futrue requests
+    return jsonify({'message': 'login succesful'}), 200 
+
+@routes.route('/logout', methods = ['POST']) 
+def logout():
+    session.pop('user_id', None) # removes user ID form the session, logging them out
+    return jsonify({'message': 'logged out'})
+
