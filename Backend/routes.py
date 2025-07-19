@@ -39,6 +39,29 @@ def logout():
     return jsonify({'message': 'logged out'})
 
 
+@routes.route('/calibrate_data', methods = ['post'])
+def calibrate_data():
+    if 'user_id' not in session:
+        return jsonify({'error': 'unauthorised'}), 401
+    
+    ata = request.get_json()
+    user_id = session['user_id']
+    user = User.query.get(user_id) # gets the user data from  the data using their ID stored in the session
+
+    input_data = Data(
+        user_id = user.user_id, 
+        dateinput = datetime.utcnow(),
+        day_1_heart_rate = data.get('day_1_heart_rate'), # gets the heart rate from calibration day 1
+        day_2_heart_rate = data.get('day_2_heart_rate'),
+        day_3_heart_rate = data.get('day_3_heart_rate'),
+        
+    
+    )
+    db.session.add(input_data) 
+    db.session.commit()
+
+    return jsonify ({'message':'data submitted successfully'}), 201
+
 @routes.route('/submit_data', methods = ['post'])
 def submit_data():
     if 'user_id' not in session: # checks if user is logged and is authorised for this route
