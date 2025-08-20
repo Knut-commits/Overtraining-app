@@ -112,6 +112,9 @@
           const data = await response.json();
           if (response.ok) {
             alert('Daily data submitted!');
+            document.getElementbyId('Score').textContent = data.score; // assuming the response contians a score
+            document.getElementById('descriptor').textContent = data.descriptor;
+
           } else {
             document.getElementById('daily-error-message').style.display = 'block';
             document.getElementById('daily-error-message').textContent = data.error || 'Submission failed';
