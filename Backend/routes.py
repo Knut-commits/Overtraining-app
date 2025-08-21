@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify, session # import neccessary moudles ofr all routes (logging in, submitting data etc)
 from datetime import datetime
-from app import db # importing database instance
-from backend.database import User, Data #importing user and data databases
-from backend.calculations import calculate_score # importing the fucntion to calculate the overtrianing scores
+from extension import db # importing database instance
+from database import User, data #importing user and data databases
+from calculations import calculate_score # importing the fucntion to calculate the overtrianing scores
 
 routes= Blueprint('routes', __name__) # creating blue prints for the routes, so easier to organise and less redudant code
 
@@ -90,8 +90,7 @@ def submit_data():
     score = calculate_score(user_id) # calculates the overtraining score using teh user id and the calculate_scoore fucniton is imported from caluclations.py
     return jsonify({'message': 'data submitted successfully', 'score': score}), 201
 
-
-@sqlite3 app.dbsqlite3 app.dbroutes.route('/score', methods = ['GET'])
+routes.route('/score', methods = ['GET'])
 def get_score():
     if 'user_id' not in session:
         return jsonify({'error': 'unauthorised'}), 401
