@@ -22,8 +22,50 @@
       <input type="password" name="confirm-password" id="confirm-password-field" class="login-form-field" placeholder="Confirm Password"> <!-- Added confirm password field -->
       <input type="submit" value="Register" id="register-form-submit">
     </form>
+
+    <h2>Calibration</h2>
+    <form id="CalibrationForm">
+      <input type="number" placeholder="Day 1 Resting Heart Rate" id="day1_hr" required>
+      <input type="number" placeholder="Day 2 Resting Heart Rate" id="day2_hr" required>
+      <input type="number" placeholder="Day 3 Resting Heart Rate" id="day3_hr" required>
+      <input type="number" placeholder="Day 1 Sleep (hours)" id="day1_sleep" required>
+      <input type="number" placeholder="Day 2 Sleep (hours)" id="day2_sleep" required>
+      <input type="number" placeholder="Day 3 Sleep (hours)" id="day3_sleep" required>
+      <button type="submit">Submit Calibration</button>
   
   </main>
+  <script>       //Calibration form handler
+      document.getElementById('CalibrationForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const calibrationData = {
+          day1_hr: document.getElementById('day1_hr').value,
+          day2_hr: document.getElementById('day2_hr').value,
+          day3_hr: document.getElementById('day3_hr').value,
+          day1_sleep: document.getElementById('day1_sleep').value,
+          day2_sleep: document.getElementById('day2_sleep').value,
+          day3_sleep: document.getElementById('day3_sleep').value
+        };
+        try {
+          const response = await fetch('http://localhost:5000/calibrate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(calibrationData)
+          });
+          const data = await response.json();
+          if (response.ok) {
+            alert('Calibration successful!');
+          } else {
+            document.getElementById('calibration-error-message').style.display = 'block';
+            document.getElementById('calibration-error-message').textContent = data.error || 'Calibration failed';
+          }
+        } catch (err) {
+          document.getElementById('calibration-error-message').style.display = 'block';
+          document.getElementById('calibration-error-message').textContent = 'An error occurred. Please try again later.';
+        }
+      });
+  <script> 
+
 </body>
 
 </html>

@@ -17,3 +17,6 @@ registerButton.addEventListener("click", (e) => {
         registerErrorMsg.style.opacity = 1;//shows erorr messgae
     }
 })
+
+
+

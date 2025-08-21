@@ -6,8 +6,8 @@ from backend.calculations import calculate_score # importing the fucntion to cal
 
 routes= Blueprint('routes', __name__) # creating blue prints for the routes, so easier to organise and less redudant code
 
-@routes.route('/signup', methods = ['POST']) # route for signing up a new account
-def signup():
+@routes.route('/register', methods = ['POST']) # route for signing up a new account
+def register():
     data = reguest.get_json() # get the json data from the reuqest
     username = data.get['username'] # get the username from the data as the data is a dictionary so im accesisng the value of the username key
     password = data.get['password'] # the same but for password
@@ -91,7 +91,7 @@ def submit_data():
     return jsonify({'message': 'data submitted successfully', 'score': score}), 201
 
 
-@routes.route('/score', methods = ['GET'])
+@sqlite3 app.dbsqlite3 app.dbroutes.route('/score', methods = ['GET'])
 def get_score():
     if 'user_id' not in session:
         return jsonify({'error': 'unauthorised'}), 401
