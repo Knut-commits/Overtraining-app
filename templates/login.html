@@ -8,87 +8,32 @@
   </head>
   <body>
     <h2>Login</h2>  
-    <form id="LoginForm"> 
+    <form action = "/login" method = "POST"> 
       <input type="text" placeholder="Username" id="username" required>
       <input type="password" placeholder="Password" id="password" required>
-      <input type="submit" value="Login" id="LoginButton">
+      <button type="submit"> Login</button>
     </form>
-    <div id="error-message" style="color:red; display:none;"></div>
+    
+    {% if error %}
+    <p style="color:red">{{ error }}</p>
+    {% endif %}
+
+    
 
     
     </form>
     <div id="calibration-error-message" style="color:red ;none;"></div>
 
     <h2>Daily Input</h2>
-    <form id="DailyInputForm">
+    <form action = "/submit_data" method = "POST">       
       <input type="number" placeholder="Resting Heart Rate" id="heart_rate" required>
       <input type="number" placeholder="Sleep (hours)" id="sleep" required>
-      <input type="number" placeholder="Body Fatigue (1-10)" id="fatigue" required>
-      <input type="number" placeholder="Motivation (1-10)" id="motivation" required>
       <button type="submit">Submit Daily Data</button>
     </form>
-    <div id="daily-error-message" style="color: red; display:none;"></div>
+    
 
-    <script>
-      // Login form handler
-      document.getElementById('LoginForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        try {
-          const response = await fetch('http://localhost:5000/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ username, password })
-          });
-          const data = await response.json();
-          if (response.ok) {
-            alert('Login successful');
-            // window.location.href = 'home.html'; // Uncomment if you want to redirect
-          } else {
-            document.getElementById('error-message').style.display = 'block';
-            document.getElementById('error-message').textContent = data.error || 'Login failed';
-          }
-        } catch (err) {
-          document.getElementById('error-message').style.display = 'block';
-          document.getElementById('error-message').textContent = 'An error occurred. Please try again later.';
-        }
-      });
 
     
-      // Daily input form handler
-      document.getElementById('DailyInputForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const dailyData = {
-          heart_rate: document.getElementById('heart_rate').value,
-          sleep: document.getElementById('sleep').value,
-          fatigue: document.getElementById('fatigue').value,
-          motivation: document.getElementById('motivation').value
-        };
-        try {
-          const response = await fetch('http://localhost:5000/daily_input', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify(dailyData)
-          });
-          const data = await response.json();
-          if (response.ok) {
-            alert('Daily data submitted!');
-            document.getElementbyId('Score').textContent = data.score; // assuming the response contians a score
-            document.getElementById('descriptor').textContent = data.descriptor;
-
-          } else {
-            document.getElementById('daily-error-message').style.display = 'block';
-            document.getElementById('daily-error-message').textContent = data.error || 'Submission failed';
-          }
-        } catch (err) {
-          document.getElementById('daily-error-message').style.display = 'block';
-          document.getElementById('daily-error-message').textContent = 'An error occurred. Please try again later.';
-        }
-      });
-    </script>
+     
   </body>
 </html>

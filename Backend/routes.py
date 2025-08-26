@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, session, render_template, request # import neccessary moudles ofr all routes (logging in, submitting data etc)
+from flask import Blueprint, redirect, request, jsonify, session, render_template, request # import neccessary moudles ofr all routes (logging in, submitting data etc)
 from datetime import datetime
 from Backend.extension import db # importing database instance
 from Backend.database import User, data #importing user and data databases
@@ -13,38 +13,42 @@ def index():
 
 @routes.route('/register', methods = ['POST']) # route for signing up a new account
 def register():
-    return render_template('register.html') # renders the register page
-    data = reguest.get_json() # get the json data from the reuqest
-    username = data.get['username'] # get the username from the data as the data is a dictionary so im accesisng the value of the username key
-    password = data.get['password'] # the same but for password
-
-    if User.query.filter_by(username=username).first(): # checks if username already exists in database, first() reyurns the first result or none if none found, saves time
-        return jsonify({'errpr': 'Username already exist'}), 409 # if username exists returns the error message and 409 status code
     
-    new_user = User(username = username, password= password) # creates a new user instance with the username and password
-    db.session.add(new_user) #add the new user to the database session
-    db.session.commit()
+    if request.method == 'POST':  #checking that reuqest method is post so data is being sent to server
+      username = request.form['username']  # gets user name + password from the form data from frontend
+      password = request.form['password']
 
-    return jsonify({'message': "aaccount created'}), 201"})
+      if User.query.filter_by(username=username).first(): #checks if username is taken
+        return render_template('register.html', error="Username already exists")
+
+      new_user = User(username=username, password=password)
+      db.session.add(new_user)
+      db.session.commit()  # commits and created a new user in the database
+
+      return redirect('/login') # redirets to login page after registering.
+
+    return render_template('register.html') # renders the register page
+
 
 @routes.route('/login', methods = ['POST']) # route for loggin into an exisitng account
 def login():
-    return render_template('login.html')
-    data = request.get_json() 
-    username = data.get['username'] 
-    password = data.get['password'] #this all the same as previous route as it is just reading data from the request
+    
+    if request.method == 'POST':
+        username = request.form['username'] 
+        password = request.form['password'] #this all the same as previous route as it is just reading data from the form
 
-    user = User.query.filter_by(username = username, password = password).first() #checks if the user details inputted macthes one in the database
-    if not user:
-        return jsonify({'error': 'inavlid username or password'}), 401 
-    session['user_id'] = user.id # if user is found then the session will store their ID sp they can be recognised in futrue requests
-    return jsonify({'message': 'login succesful'}), 200 
+        user = User.query.filter_by(username = username, password = password).first() #checks if the user details inputted macthes one in the database
+        if not user:
+            return render_template('login.html', error="Invalid username or password")
+        session['user_id'] = user.id # if user is found then the session will store their ID sp they can be recognised in futrue requests
+        return redirect('/submit_data') 
+    return render_template('login.html')
 
 @routes.route('/logout', methods = ['POST']) 
 def logout():
 
     session.pop('user_id', None) # removes user ID form the session, logging them out
-    return jsonify({'message': 'logged out'})
+    return redirect('/login')
 
 
 @routes.route('/calibrate_data', methods = ['POST'])
@@ -69,21 +73,20 @@ def calibrate_data():
     db.session.commit()
 
     return jsonify ({'message':'data submitted successfully'}), 201
-
+# need to chnage rest from json to form data
 @routes.route('/submit_data', methods = ['post'])
 def submit_data():
     if 'user_id' not in session: # checks if user is logged and is authorised for this route
-        return jsonify ({'error': 'unauthorised'}), 401 
+        return redirect('/login')
     
-    data = request.get_json()
-    user_id = session['user_id']
-    user = User.query.get(user_id) # gets the user data from  the data using their ID stored in the session
+    heart_rate = request.form('heart_rate') 
+    sleep = request.form('sleep') # gets teh data from the submit data form
 
     input_data = Data(
-        user_id = user.user_id, #links data to the user
+        user_id = session['user_id'],
         dateinput = datetime.utcnow(), #sets the date and time inputed to now as the requets is now
-        heart_rate = data.get('heart_rate'), # gets the heart rate from the data 
-        sleep = data.get('sleep'),
+        heart_rate = heart_rate,
+        sleep = sleep
         # mood = data.get('mood'),
         # fatigue = data.get('fatigue')
     
@@ -95,10 +98,10 @@ def submit_data():
     db.session.commit() 
 
 
-    score = calculate_score(user_id) # calculates the overtraining score using teh user id and the calculate_scoore fucniton is imported from caluclations.py
-    return jsonify({'message': 'data submitted successfully', 'score': score}), 201
+    score = calculate_score(session['user_id']) #alng teh user id and the calculate_scoore fucniton is imported from caluclations.py
+    return render_template('home.html', score = score) 
 
-routes.route('/score', methods = ['GET'])
+routes.route('/score', methods = ['GET'])  
 def get_score():
     if 'user_id' not in session:
         return jsonify({'error': 'unauthorised'}), 401
