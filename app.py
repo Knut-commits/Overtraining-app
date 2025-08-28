@@ -15,6 +15,9 @@ def create_app():
     jwt.init_app(app) # intiliES THE jwt with teh app instance
 
     app.register_blueprint(routes) #registers the blue print routes wiht the app instance
+
+    with app.app_context(): # creates database tables if they do not exist
+        db.create_all()
     return app
 
 

@@ -11,7 +11,7 @@ def index():
     return render_template('register.html') # renders the first page which is the register page.
 
 
-@routes.route('/register', methods = ['POST']) # route for signing up a new account
+@routes.route('/register', methods = ['GET','POST']) # route for signing up a new account
 def register():
     
     if request.method == 'POST':  #checking that reuqest method is post so data is being sent to server
@@ -30,7 +30,7 @@ def register():
     return render_template('register.html') # renders the register page
 
 
-@routes.route('/login', methods = ['POST']) # route for loggin into an exisitng account
+@routes.route('/login', methods = ['GET','POST']) # route for loggin into an exisitng account
 def login():
     
     if request.method == 'POST':
@@ -41,7 +41,7 @@ def login():
         if not user:
             return render_template('login.html', error="Invalid username or password")
         session['user_id'] = user.id # if user is found then the session will store their ID sp they can be recognised in futrue requests
-        return redirect('/submit_data') 
+        return render_template('home.html') # redirects to home page 
     return render_template('login.html')
 
 @routes.route('/logout', methods = ['POST']) 
@@ -54,27 +54,32 @@ def logout():
 @routes.route('/calibrate_data', methods = ['POST'])
 def calibrate_data():
     if 'user_id' not in session:
-        return jsonify({'error': 'unauthorised'}), 401
-    
-    ata = request.get_json()
-    user_id = session['user_id']
-    user = User.query.get(user_id) # gets the user data from  the data using their ID stored in the session
+        return redirect('/login')
 
-    input_data = Data(
-        user_id = user.user_id, 
-        dateinput = datetime.utcnow(),
-        day_1_heart_rate = data.get('day_1_heart_rate'), # gets the heart rate from calibration day 1
-        day_2_heart_rate = data.get('day_2_heart_rate'),
-        day_3_heart_rate = data.get('day_3_heart_rate'),
-        
-    
-    )
-    db.session.add(input_data) 
-    db.session.commit()
+    if request.method == 'POST':
+        user_id = session['user_id']
+        user = User.query.get(user_id)
 
-    return jsonify ({'message':'data submitted successfully'}), 201
+        input_data = data(
+            user_id=user.id,
+            dateinput=datetime.utcnow(),
+            day_1_heart_rate=request.form.get('day_1_heart_rate'),
+            day_2_heart_rate=request.form.get('day_2_heart_rate'),
+            day_3_heart_rate=request.form.get('day_3_heart_rate'),
+            day_1_sleep=request.form.get('day_1_sleep'),
+            day_2_sleep=request.form.get('day_2_sleep'),
+            day_3_sleep=request.form.get('day_3_sleep')
+        )
+
+        db.session.add(input_data)
+        db.session.commit()
+
+    return redirect('/home')
+    
+    
+    
 # need to chnage rest from json to form data
-@routes.route('/submit_data', methods = ['post'])
+@routes.route('/submit_data', methods = ['POST'])
 def submit_data():
     if 'user_id' not in session: # checks if user is logged and is authorised for this route
         return redirect('/login')
@@ -82,7 +87,7 @@ def submit_data():
     heart_rate = request.form('heart_rate') 
     sleep = request.form('sleep') # gets teh data from the submit data form
 
-    input_data = Data(
+    input_data = data(
         user_id = session['user_id'],
         dateinput = datetime.utcnow(), #sets the date and time inputed to now as the requets is now
         heart_rate = heart_rate,
@@ -111,13 +116,13 @@ def home():
         return redirect('/login') #redirect if user not found
     score = calculate_score(user_id)
 
-    data = Data.query.filter_by(user_id = user_id).all()
+    data = data.query.filter_by(user_id = user_id).all()
     history = [
         {
             'dateinput': d.dateinput,
             'heart_rate' : d.heart_rate,
             'sleep' : d.sleep
-            '
+            
         }
         for d in data
     ]
