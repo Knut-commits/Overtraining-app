@@ -101,34 +101,27 @@ def submit_data():
     score = calculate_score(session['user_id']) #alng teh user id and the calculate_scoore fucniton is imported from caluclations.py
     return render_template('home.html', score = score) 
 
-routes.route('/score', methods = ['GET'])  
-def get_score():
+routes.route('/home', methods = ['GET'])  
+def home():
     if 'user_id' not in session:
-        return jsonify({'error': 'unauthorised'}), 401
+        return redirect('/Login') #redirect if not logged in
     user_id = session['user_id']
     user = User.query.get(user_id) 
     if not user:
-        return jsonify ({'error': 'user not found'}), 404
+        return redirect('/login') #redirect if user not found
     score = calculate_score(user_id)
-    return jsonify({'score': score}), 200 # returns the score a a json obect so it can be used in the frontend plus we use status code 200 to indicate usccess
 
-    JWT_SECRET_KEY = os.getenv("JWT_SECRET") # secret key for JWT, used for signing tokens in this case  the token is used ot authenticate users and poretct routs
-    SQLALCHEMY_TRACK_MODIFICATIONS= False # disables track modifcation to save memory
-    JWT_ACCESS_TOKEN_EXPIRES = 3600 # expires in one hour
-    JWT_REFRESH_TOKEN_EXPIRES = 86400 # refresh token expires in one day
-
-    
-@routes.route('/history', methods=['GET'])
-def get_history():
-    if 'user_id' not in session:
-        return jsonify({'error': 'unauthorised'}), 401
-    user_id= session['user_id']
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({'error': 'user not found'}), 404
     data = Data.query.filter_by(user_id = user_id).all()
-    history = [{'dateinput': d.dateinput, 'heart_rate': d.heart_rate, 'sleep': d.sleep} for d in data] # retrieves all data for the user and formats it into a list of dictionaries
-    return jsonify({'history' : history}), 200
+    history = [
+        {
+            'dateinput': d.dateinput,
+            'heart_rate' : d.heart_rate,
+            'sleep' : d.sleep
+            '
+        }
+        for d in data
+    ]
+    return render_template('home.html', history = history, score = score)
 
 
     
