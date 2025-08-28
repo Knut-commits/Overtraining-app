@@ -7,7 +7,27 @@
     <link href = {{ url_for('static', filename='home.css') }} "rel  = stylesheet" />
 </head>
 <body>
-    <h1>Overtraining score </h1>
+    <section>
+        <h2>Your Overtraining Score </h2>
+        <p>{{ score }}</p>
+    </section>
+
+    <section>
+        <h2> your Data History</h2>
+        <ul>
+            {% for entry in history %}
+                <li>
+                    {{entry.dateinput}} - Heart Rate: {{ entry.heart_rate }}, Sleep: {{ entry.sleep }}
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+<a href = "/submit_data"> Submit New Data</a>
+<form action ="/logout" method = "POST">
+    <button type = "submit">Logout</button>
+</form>
+
     
 </body>
 </html>
