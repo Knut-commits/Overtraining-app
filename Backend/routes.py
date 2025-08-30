@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, request, jsonify, session, render_template, request # import neccessary moudles ofr all routes (logging in, submitting data etc)
-from datetime import datetime
+from datetime import date, datetime
 from Backend.extension import db # importing database instance
-from Backend.database import User, data #importing user and data databases
+from Backend.database import Data, User #importing user and data databases
 from Backend.calculations import calculate_score # importing the fucntion to calculate the overtrianing scores
 
 routes= Blueprint('routes', __name__) # creating blue prints for the routes, so easier to organise and less redudant code
@@ -41,8 +41,14 @@ def login():
         if not user:
             return render_template('login.html', error="Invalid username or password")
         session['user_id'] = user.id # if user is found then the session will store their ID sp they can be recognised in futrue requests
-        return redirect('/home') # redirects to home page 
-    
+        if not getattr(user,'Base_heart_rate',None): #checking if user has calibraiton data
+            return redirect('/calibrate_data') #redirects to calibrate data page')
+        
+        latest = Data.query.filter_by(user_id=user.id).order_by(Data.dateinput.desc()).first()
+        if not latest or latest.dateinput.date() < date.today():
+            return redirect('/submit_data')
+        #chekcing that most recent data entry was today otherwise getting redirecting to submit data
+        return redirect('/home')
     
     return render_template('login.html')
 
@@ -53,27 +59,23 @@ def logout():
     return redirect('/login')
 
 
-@routes.route('/calibrate_data', methods = ['POST'])
+@routes.route('/calibrate_data', methods = ['GET','POST'])
 def calibrate_data():
     if 'user_id' not in session:
         return redirect('/login')
-
+    user_id = session['user_id']
+    user = User.query.get(user_id)
     if request.method == 'POST':
-        user_id = session['user_id']
-        user = User.query.get(user_id)
-
-        input_data = data(
-            user_id=user.id,
-            dateinput=datetime.utcnow(),
-            day_1_heart_rate=request.form.get('day_1_heart_rate'),
-            day_2_heart_rate=request.form.get('day_2_heart_rate'),
-            day_3_heart_rate=request.form.get('day_3_heart_rate'),
-            day_1_sleep=request.form.get('day_1_sleep'),
-            day_2_sleep=request.form.get('day_2_sleep'),
-            day_3_sleep=request.form.get('day_3_sleep')
-        )
-
-        db.session.add(input_data)
+        try:
+           h1 = float(request.form.get('day1_hr'))
+           h2=float(request.form.get('day2_hr'))
+           h3=float(request.form.get('day3_hr'))
+        except ValueError:
+            return render_template('calibrate_data.html')
+        
+        
+        base_heart_rate = (h1 + h2 + h3) /3.0
+        user.Base_heart_rate = base_heart_rate
         db.session.commit()
 
         return redirect('/home')
@@ -81,44 +83,52 @@ def calibrate_data():
     return render_template('calibrate_data.html')
     
 
-@routes.route('/submit_data', methods = ['POST'])
+@routes.route('/submit_data', methods = ['GET','POST'])
 def submit_data():
     if 'user_id' not in session: # checks if user is logged and is authorised for this route
         return redirect('/login')
-    
-    heart_rate = request.form.get('heart_rate') 
-    sleep = request.form.get('sleep') # gets teh data from the submit data form
+    if request.method == 'POST':
+        heart_rate = request.form.get('heart_rate') 
+        sleep = request.form.get('sleep') # gets teh data from the submit data form
 
-    input_data = data(
-        user_id = session['user_id'],
-        dateinput = datetime.utcnow(), #sets the date and time inputed to now as the requets is now
-        heart_rate = heart_rate,
-        sleep = sleep
+        input_data = Data(
+            user_id = session['user_id'],
+            dateinput = datetime.utcnow(), #sets the date and time inputed to now as the requets is now
+            heart_rate = heart_rate,
+            sleep = sleep
         # mood = data.get('mood'),
         # fatigue = data.get('fatigue')
     
 
 
-    )  # creates a new data instance with the user ID and the data inputted
-    db.session.add(input_data) # adds the new data to the database session
+        )  # creates a new data instance with the user ID and the data inputted
+        db.session.add(input_data) # adds the new data to the database session
 
-    db.session.commit() 
+        db.session.commit() 
+        return redirect('/home')
+    return render_template('submit_data.html')
 
 
-    score = calculate_score(session['user_id']) #alng teh user id and the calculate_scoore fucniton is imported from caluclations.py
-    return render_template('submit_data.html', score = score) 
-
-routes.route('/home', methods = ['GET'])  
+@routes.route('/home', methods = ['GET'])  
 def home():
     if 'user_id' not in session:
-        return redirect('/Login') #redirect if not logged in
+        return redirect('/login') #redirect if not logged in
     user_id = session['user_id']
     user = User.query.get(user_id) 
     if not user:
         return redirect('/login') #redirect if user not found
-    score = calculate_score(user_id)
+    
+    latest = Data.query.filter_by(user_id=user.id).order_by(Data.dateinput.desc()).first()
+    if not latest:
+        return redirect('/submit_data') #redirect if no data found
+    
+    calibration = latest.Base_heart_rate
+    heart = latest.heart_rate
+    sleep = latest.sleep
+    score = calculate_score(heart,sleep,calibration)
 
-    data = data.query.filter_by(user_id = user_id).all()
+
+    data = Data.query.filter_by(user_id = user_id).all()
     history = [
         {
             'dateinput': d.dateinput,

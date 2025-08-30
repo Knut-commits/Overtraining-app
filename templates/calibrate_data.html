@@ -13,12 +13,9 @@
     <div id="calibration-error-message" style="color:red ;none;"></div>
 
     <form action="/calibrate_data" method = "POST">
-      <input type="number" placeholder="Day 1 Resting Heart Rate" id="day1_hr" required>
-      <input type="number" placeholder="Day 2 Resting Heart Rate" id="day2_hr" required>
-      <input type="number" placeholder="Day 3 Resting Heart Rate" id="day3_hr" required>
-      <input type="number" placeholder="Day 1 Sleep (hours)" id="day1_sleep" required>
-      <input type="number" placeholder="Day 2 Sleep (hours)" id="day2_sleep" required>
-      <input type="number" placeholder="Day 3 Sleep (hours)" id="day3_sleep" required>
+      <input type="number" placeholder="Day 1 Resting Heart Rate" name="day1_hr" required>
+      <input type="number" placeholder="Day 2 Resting Heart Rate" name="day2_hr" required>
+      <input type="number" placeholder="Day 3 Resting Heart Rate" name="day3_hr" required>
       <button type="submit">Submit Calibration</button>
     </form>
 </body>
