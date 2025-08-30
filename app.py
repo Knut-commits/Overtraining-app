@@ -18,6 +18,7 @@ def create_app():
 
     with app.app_context(): # creates database tables if they do not exist
         db.create_all()
+    
     return app
 
 

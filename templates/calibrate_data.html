@@ -1,0 +1,24 @@
+<!DOCTYPE html> <!-- declares document type -->
+<html lang="en"> <!-- specifies the langauge of doc as english -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--ensure scaling on all types of devices -->
+  <title>Calibrate_data</title> <!--sets the title -->
+  <link href = "{{ url_for('static', filename='style.css') }} "rel  = stylesheet" />
+</head>
+
+<body>
+    
+    </form>
+    <div id="calibration-error-message" style="color:red ;none;"></div>
+
+    <form action="/calibrate_data" method = "POST">
+      <input type="number" placeholder="Day 1 Resting Heart Rate" id="day1_hr" required>
+      <input type="number" placeholder="Day 2 Resting Heart Rate" id="day2_hr" required>
+      <input type="number" placeholder="Day 3 Resting Heart Rate" id="day3_hr" required>
+      <input type="number" placeholder="Day 1 Sleep (hours)" id="day1_sleep" required>
+      <input type="number" placeholder="Day 2 Sleep (hours)" id="day2_sleep" required>
+      <input type="number" placeholder="Day 3 Sleep (hours)" id="day3_sleep" required>
+      <button type="submit">Submit Calibration</button>
+    </form>
+</body>

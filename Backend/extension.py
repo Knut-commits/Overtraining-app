@@ -4,3 +4,4 @@ from flask_jwt_extended import JWTManager #secures routes so only logged in user
 
 db = SQLAlchemy()
 jwt = JWTManager()
+

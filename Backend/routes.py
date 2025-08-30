@@ -8,7 +8,7 @@ routes= Blueprint('routes', __name__) # creating blue prints for the routes, so 
 
 @routes.route('/')
 def index():
-    return render_template('register.html') # renders the first page which is the register page.
+    return redirect('/login') # login page will be the first page.
 
 
 @routes.route('/register', methods = ['GET','POST']) # route for signing up a new account
@@ -41,7 +41,9 @@ def login():
         if not user:
             return render_template('login.html', error="Invalid username or password")
         session['user_id'] = user.id # if user is found then the session will store their ID sp they can be recognised in futrue requests
-        return render_template('home.html') # redirects to home page 
+        return redirect('/home') # redirects to home page 
+    
+    
     return render_template('login.html')
 
 @routes.route('/logout', methods = ['POST']) 
@@ -74,18 +76,18 @@ def calibrate_data():
         db.session.add(input_data)
         db.session.commit()
 
-    return redirect('/home')
+        return redirect('/home')
     
+    return render_template('calibrate_data.html')
     
-    
-# need to chnage rest from json to form data
+
 @routes.route('/submit_data', methods = ['POST'])
 def submit_data():
     if 'user_id' not in session: # checks if user is logged and is authorised for this route
         return redirect('/login')
     
-    heart_rate = request.form('heart_rate') 
-    sleep = request.form('sleep') # gets teh data from the submit data form
+    heart_rate = request.form.get('heart_rate') 
+    sleep = request.form.get('sleep') # gets teh data from the submit data form
 
     input_data = data(
         user_id = session['user_id'],
@@ -104,7 +106,7 @@ def submit_data():
 
 
     score = calculate_score(session['user_id']) #alng teh user id and the calculate_scoore fucniton is imported from caluclations.py
-    return render_template('home.html', score = score) 
+    return render_template('submit_data.html', score = score) 
 
 routes.route('/home', methods = ['GET'])  
 def home():

@@ -1,0 +1,19 @@
+<!DOCTYPE html> <!-- declares document type -->
+<html lang="en"> <!-- specifies the langauge of doc as english -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--ensure scaling on all types of devices -->
+  <title>Submit Data</title> <!--sets the title -->
+  <link href = "{{ url_for('static', filename='style.css') }} "rel  = stylesheet" />
+</head>
+
+<body>
+    
+    <h2>Daily Input</h2>
+    <form action = "/submit_data" method = "POST">       
+      <input type="number" placeholder="Resting Heart Rate" id="heart_rate" required>
+      <input type="number" placeholder="Sleep (hours)" id="sleep" required>
+      <button type="submit">Submit Daily Data</button>
+    </form>
+    <h2>Calibration</h2>
+</body>
