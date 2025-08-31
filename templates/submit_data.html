@@ -12,8 +12,11 @@
     <h2>Daily Input</h2>
     <form action = "/submit_data" method = "POST">       
       <input type="number" placeholder="Resting Heart Rate" name="heart_rate" required>
-      <input type="number" placeholder="Sleep (hours)" name="sleep" required>
+      <input type="number" placeholder="Sleep (hours)" name="sleep"  step = "any" required>
       <button type="submit">Submit Daily Data</button>
     </form>
-    <h2>Calibration</h2>
+    <h2>reDoCalibration</h2>
+    <form action = "/calibrate_data" method = "GET">
+      <button type = "submit"> Recalibrate </button>
+    </form>
 </body>

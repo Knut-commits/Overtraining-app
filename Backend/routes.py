@@ -87,13 +87,24 @@ def calibrate_data():
 def submit_data():
     if 'user_id' not in session: # checks if user is logged and is authorised for this route
         return redirect('/login')
+    
+    user = User.query.get(session['user_id'])
     if request.method == 'POST':
-        heart_rate = request.form.get('heart_rate') 
-        sleep = request.form.get('sleep') # gets teh data from the submit data form
+        try:    
+            heart_rate = float(request.form.get('heart_rate')) 
+            sleep = float(request.form.get('sleep')) # gets teh data from the submit data form
+        except (TypeError, ValueError, AttributeError):
+            return render_template('submit_data.html', error = "invalid input, number only")
+        
+        base_hr = getattr(user,'Base_heart_rate',None) #getting base heart rate from user table
+        
+        if base_hr is None:
+            return redirect('/calibrate_data')
 
         input_data = Data(
             user_id = session['user_id'],
             dateinput = datetime.utcnow(), #sets the date and time inputed to now as the requets is now
+            Base_heart_rate = base_hr,
             heart_rate = heart_rate,
             sleep = sleep
         # mood = data.get('mood'),

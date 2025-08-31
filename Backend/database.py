@@ -5,6 +5,7 @@ class User(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     username = db.Column(db.String(80), unique = True, nullable = False) #size of 80 characters and can't be empty
     password = db.Column(db.String(200), nullable = False) #size of 200 characters and can;t be empty
+    Base_heart_rate = db.Column(db.Float, nullable = True) #base heart rate in beats per minute
 
 class Data(db.Model):
     data_id = db.Column(db.Integer, primary_key = True)
