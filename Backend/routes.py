@@ -106,7 +106,8 @@ def submit_data():
             dateinput = datetime.utcnow(), #sets the date and time inputed to now as the requets is now
             Base_heart_rate = base_hr,
             heart_rate = heart_rate,
-            sleep = sleep
+            sleep = sleep,
+            score = calculate_score(heart_rate, sleep, base_hr)[0], #storing just the score value not the descriptor
         # mood = data.get('mood'),
         # fatigue = data.get('fatigue')
     
@@ -144,12 +145,16 @@ def home():
         {
             'dateinput': d.dateinput,
             'heart_rate' : d.heart_rate,
-            'sleep' : d.sleep
+            'sleep' : d.sleep,
+            'score' : d.score if d.score is not None else "N/A" #only use score if the score is there.
             
         }
         for d in data
     ]
-    return render_template('home.html', history = history, score = score)
+
+    chart_labels = [d.dateinput.strftime('%Y-%m-%d') for d in data]
+    chart_scores = [d.score if d.score is not None else 0 for d in data]
+    return render_template('home.html', history = history, score = score, chart_labels = chart_labels, chart_scores = chart_scores) 
 
 
     
