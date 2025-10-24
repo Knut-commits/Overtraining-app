@@ -120,7 +120,14 @@ def submit_data():
         return redirect('/home')
     return render_template('submit_data.html')
 
-
+def get_recovery_advice(score:float) ->str:
+    if score >=7.0:
+        return("You are overtrained. Take 1-2 rest days, sleep 8-9 hours. Stay hydrated and only light mobility DISCLAIMER: not a doctor")
+    elif score >=4.0:
+        return ("Moderate stress, reduce volume by 30-40% or keep intensity low, prioritize 8h sleep, hydration. DISCLAIMER: not a doctor")
+    else:
+        return("Well recovered,continue training, but keep good habits. Adequate sleep, fueling properly, carbs/protein after sessions. DISCLAIMER: not a doctor ")
+    
 @routes.route('/home', methods = ['GET'])  
 def home():
     if 'user_id' not in session:
@@ -137,8 +144,9 @@ def home():
     calibration = latest.Base_heart_rate
     heart = latest.heart_rate
     sleep = latest.sleep
-    score = calculate_score(heart,sleep,calibration)
+    score_value, descriptor = calculate_score(heart,sleep,calibration) #splitting the returned tuple into score value and descriptor
 
+    advice = get_recovery_advice(float(score_value)) 
 
     data = Data.query.filter_by(user_id = user_id).all()
     history = [
@@ -154,7 +162,7 @@ def home():
 
     chart_labels = [d.dateinput.strftime('%Y-%m-%d') for d in data]
     chart_scores = [d.score if d.score is not None else 0 for d in data]
-    return render_template('home.html', history = history, score = score, chart_labels = chart_labels, chart_scores = chart_scores) 
+    return render_template('home.html', history = history, score = round(score_value,2),descriptor = descriptor ,advice = advice, chart_labels = chart_labels, chart_scores = chart_scores) 
 
 
     

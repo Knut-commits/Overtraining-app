@@ -10,7 +10,35 @@
 <body>
     <section>
         <h2>Your Overtraining Score </h2>
-        <p>{{ score }}</p>
+
+        <!--makes the score clickable -->
+        <button id = "scorebutton"
+            data-advice = "{{ advice}}">
+          ({{ score }}, '{{descriptor}}')
+        </button>
+
+        <!--pop up dialog-->
+        <dialog id = "adviceDialog">
+            <h3>Recovery Advice</h3>
+            <p id="adviceText"></p>
+            <form method ="dialog">
+                <button>Close</button>
+
+            </form>
+
+        </dialog>
+
+        <script>
+            const btn = document.getElementById('scorebutton');
+            const dialog = document.getElementById('adviceDialog');
+            const adviceText = document.getElementById('adviceText');
+
+            btn.addEventListener('click',() => {
+                adviceText.textContent = btn.dataset.advice;
+                dialog.showModal();
+            
+            });
+        </script>
     </section>
 
     <section>
