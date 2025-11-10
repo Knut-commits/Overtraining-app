@@ -1,0 +1,44 @@
+<!DOCTYPE html> <!-- declares document type -->
+<html lang="en"> <!-- specifies the langauge of doc as english -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--ensure scaling on all types of devices -->
+  <title>Register</title> <!--sets the title -->
+  <link href = "{{ url_for('static', filename='style.css') }} "rel  = stylesheet" />
+</head>
+
+<body>
+  <main id="main-holder"> <!-- container of rthe page -->
+    <h1 id="register-header">Register</h1> <!--header -->
+    {% if error %}
+    <div id="register-error-msg-holder"> <!--container -->
+      <p id="register-error-msg">{{ error }}</p> <!--error text -->   
+    </div>
+    {% endif %}
+    
+    <form action="/register" method="POST">  <!--inputs for usernmae,passwqord and to submit -->
+      <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
+      <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+      <input type="password" name="confirm-password" id="confirm-password-field" class="login-form-field" placeholder="Confirm Password"> <!-- Added confirm password field -->
+      <button type = "submit">register</button>
+    </form>
+
+    
+    
+    {% if error %}
+     <p style="color:red">{{ error }}</p>
+    {% endif %}
+
+    
+  
+  </main>
+  <h2> Login<h2>
+    <form action = "/login" method = "GET">
+      <button type = "submit"> Go to login </button>
+    </form>
+
+  
+
+</body>
+
+</html>
