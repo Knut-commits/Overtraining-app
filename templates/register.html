@@ -10,10 +10,11 @@
 <body>
   <main id="main-holder"> <!-- container of rthe page -->
     <h1 id="register-header">Register</h1> <!--header -->
-    
+    {% if error %}
     <div id="register-error-msg-holder"> <!--container -->
-      <p id="register-error-msg">Invalid username <span id="error-msg-second-line">and/or password</span></p> <!--error text -->   
+      <p id="register-error-msg">{{ error }}</p> <!--error text -->   
     </div>
+    {% endif %}
     
     <form action="/register" method="POST">  <!--inputs for usernmae,passwqord and to submit -->
       <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
