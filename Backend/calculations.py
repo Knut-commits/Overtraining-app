@@ -18,7 +18,7 @@ def calculate_score(Heart_rate,sleep,Base_heart_rate):
     
     #this is deciding the heart rate portion of the overtriang score hwoever it has a maxiumum of 9 meaning only 9 out of the 10 points are can be due to heart rate
 
-    Over_training_score = (Hr_score + ((10-sleep)/100)) # so this is my frist draft of the score so it someone were to have a resting heart rate 25 beats over their baseline resting heart rate and had a sleep score of 100 out of 100 they would receive an overtriang score of 10/10
+    Over_training_score = (Hr_score + ((10-sleep)/10)) # so this is my frist draft of the score so it someone were to have a resting heart rate 25 beats over their baseline resting heart rate and had a sleep score of 100 out of 100 they would receive an overtriang score of 10/10
 
     if Over_training_score >=7.0:
         descriptor = "Overtrained, rest is recommended"
