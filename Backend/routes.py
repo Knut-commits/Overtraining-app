@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, request, jsonify, session, render_template, request # import neccessary moudles ofr all routes (logging in, submitting data etc)
+from flask import Blueprint, redirect, request, jsonify, session, render_template, request # import necessary modules for all routes (logging in, submitting data etc)
 from datetime import date, datetime
 from Backend.extension import db # importing database instance
 from Backend.database import Data, User #importing user and data databases
